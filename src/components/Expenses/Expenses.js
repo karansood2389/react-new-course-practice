@@ -5,33 +5,28 @@ import ExpensesFilter from "./ExpensesFilter";
 import ExpenseItem from "./ExpenseItem";
 
 import "./Expenses.css";
+import ExpensesList from "./ExpensesList";
+import ExpenseChart from "./ExpenseChart";
 
 const Expenses = (props) => {
-  const [selectedValue, setSelectedValue] = useState("2021");
-  const onValueChange = (data) => {
-    setSelectedValue(data);
-    setTimeout(() => {
-      console.log(selectedValue);
-    }, 100);
+  const [filteredValue, setFilteredValue] = useState("2021");
+
+  const filterChangeHandler = (data) => {
+    setFilteredValue(data);
   };
 
-  const expenses = props.expenses.map((expense) => {
-    return (
-      <ExpenseItem
-        title={expense.title}
-        amount={expense.amount}
-        date={expense.date}
-        key={expense.id}
-      />
-    );
-  });
+  const filteredExpenses = props.expenses.filter(
+    (expense) => +filteredValue === +expense.date.getFullYear()
+  );
+
   return (
     <Card className="expenses">
       <ExpensesFilter
-        valueForSelect={selectedValue}
-        onValueChange={onValueChange}
+        valueForSelect={filteredValue}
+        onValueChange={filterChangeHandler}
       />
-      {expenses}
+      <ExpenseChart expense={filteredExpenses}/>
+      <ExpensesList items={filteredExpenses} />
     </Card>
   );
 };
