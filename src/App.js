@@ -1,55 +1,24 @@
-import { useState } from "react";
-import styles from "./App.module.sass";
-import Modal from "./Components/UI/Modal";
-import UserInput from "./Components/Users/UserInput";
-import Users from "./Components/Users/Users";
-import ErrorPopUp from "./Components/ErrorPopUp/ErrorPopup";
+import React, { useState } from 'react';
+
+import AddUser from './components/Users/AddUser';
+import UsersList from './components/Users/UsersList';
 
 function App() {
-  const inputParams = [
-    {
-      label: "Username",
-      name: "nameInput",
-      type: "text",
-    },
-    {
-      label: "Age (Years)",
-      name: "ageInput",
-      type: "number",
-    },
-  ];
+  const [usersList, setUsersList] = useState([]);
 
-  const [member, setMember] = useState([]);
-  const [message, setMessage] = useState({ message: null });
-
-  const addMemberHandler = (data, msg) => {
-    if (msg === "") {
-      const dataShow = {
-        id: Math.round(Math.random() * 1000),
-        value: data,
-      };
-      setMember((prevState) => {
-        return [...prevState, dataShow];
-      });
-      setMessage(msg);
-      return;
-    }
-    setMessage(msg);
-  };
-
-  const errorPopUpHandler = () => {
-    setMessage({message: null});
+  const addUserHandler = (uName, uAge) => {
+    setUsersList((prevUsersList) => {
+      return [
+        ...prevUsersList,
+        { name: uName, age: uAge, id: Math.random().toString() },
+      ];
+    });
   };
 
   return (
     <div>
-      <Modal show={message.message !== null}>
-        <ErrorPopUp title={message.title} message={message.message} clickEvent={errorPopUpHandler} />
-      </Modal>
-      <div className={styles.App}>
-        <UserInput items={inputParams} addMember={addMemberHandler} />
-        {member.length > 0 ? <Users users={member} /> : null}
-      </div>
+      <AddUser onAddUser={addUserHandler} />
+      <UsersList users={usersList} />
     </div>
   );
 }

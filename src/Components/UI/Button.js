@@ -1,13 +1,17 @@
-import styles from './Button.module.sass';
+import React from 'react';
 
-const Button = props => {
-   return (
-       <div className={`${styles.Button} ${props.class ? props.class: ''}`}>
-           <button onClick={props.onClick}>
-               {props.name}
-           </button>
-       </div>
-   ) 
-}
+import classes from './Button.module.css';
+
+const Button = (props) => {
+  return (
+    <button
+      className={classes.button}
+      type={props.type || 'button'}
+      onClick={props.onClick}
+    >
+      {props.children}
+    </button>
+  );
+};
 
 export default Button;
