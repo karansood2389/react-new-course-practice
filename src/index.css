@@ -1,31 +1,16 @@
-@import url("https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;700&display=swap");
-
 * {
   box-sizing: border-box;
 }
 
 html {
-  font-family: "Noto Sans JP", sans-serif;
+  font-family: sans-serif;
+  background: #fff;
 }
 
 body {
   margin: 0;
-  background-color: #3f3f3f;
 }
 
-* {
-  scrollbar-width: none; /* Firefox */
-  -ms-overflow-style: none; /* IE 10+ */
-}
-* ::-webkit-scrollbar-track {
-  -webkit-box-shadow: none !important;
-  box-shadow: none !important;
-  background-color: transparent;
-}
-* ::-webkit-scrollbar {
-  width: 3px !important;
-  background-color: transparent;
-}
-* ::-webkit-scrollbar-thumb {
-  background-color: transparent;
+main {
+  margin-top: 6rem;
 }
