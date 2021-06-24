@@ -3,6 +3,7 @@ import React, { useCallback, useEffect, useState } from "react";
 import MoviesList from "./components/MoviesList";
 import AddMovie from "./components/AddMovie";
 import "./App.css";
+import axios from "axios";
 
 function App() {
   const [filmList, setFilmList] = useState([]);
@@ -12,51 +13,45 @@ function App() {
   const fetchFilmListHandler = useCallback(async () => {
     setIsLoading(true);
     setIsError(null);
-    try {
-      const response = await fetch("https://react-my-burger-4abf5.firebaseio.com/movies.json");
-      if (!response.ok) {
-        throw new Error("Some thing went wrong");
-      }
-      const data = await response.json();
-      const filteredList = [];
+    const { data } = await axios.get(
+      "https://react-my-burger-4abf5.firebaseio.com/movies.json"
+    );
+    // const data = await response.json();
+    const filteredList = [];
 
-      for (let key in data) {
-        filteredList.push({
-          id: key,
-          title: data[key].title,
-          openingText: data[key].openingText,
-          releaseDate: data[key].releaseDate
-        })
-      }    
-
-      // const filteredList = data.results.map((filmItem) => ({
-      //   id: filmItem.episode_id,
-      //   title: filmItem.title,
-      //   openingText: filmItem.opening_crawl,
-      //   releaseDate: filmItem.release_date,
-      // }));
-      setFilmList(filteredList);
-      setIsLoading(false);
-    } catch (error) {
-      setIsLoading(false);
-      setIsError(error);
+    for (let key in data) {
+      filteredList.push({
+        id: key,
+        title: data[key].title,
+        openingText: data[key].openingText,
+        releaseDate: data[key].releaseDate,
+      });
     }
-  }, [])
+
+    // const filteredList = data.results.map((filmItem) => ({
+    //   id: filmItem.episode_id,
+    //   title: filmItem.title,
+    //   openingText: filmItem.opening_crawl,
+    //   releaseDate: filmItem.release_date,
+    // }));
+    setFilmList(filteredList);
+    setIsLoading(false);
+  }, []);
 
   useEffect(() => {
-    fetchFilmListHandler();
+    fetchFilmListHandler().catch(errorHandling);
   }, [fetchFilmListHandler]);
 
+  const errorHandling = (e) => {
+    console.log(e);
+    setIsLoading(false);
+    setIsError(e);
+  };
+
   async function addMovieHandler(movie) {
-    const response = await fetch("https://react-my-burger-4abf5.firebaseio.com/movies.json", {
-      method: 'POST',
-      body: JSON.stringify(movie),
-      headers: {
-        'Content-Type': 'application/json'
-      }
-    });
-    const data = await response.json();
-    console.log(data);
+    const response = await axios.post("/movies.json", movie);
+    // const data = await response.json();
+    console.log(response);
   }
 
   let content = <p>No films found.</p>;
@@ -65,7 +60,7 @@ function App() {
   }
 
   if (!isLoading && isError) {
-    content = <p>{isError.message}</p>
+    content = <p>{isError.message}</p>;
   }
 
   if (isLoading) {
@@ -78,11 +73,15 @@ function App() {
         <AddMovie onAddMovie={addMovieHandler} />
       </section>
       <section>
-        <button onClick={fetchFilmListHandler}>Fetch Movies</button>
+        <button
+          onClick={() => {
+            fetchFilmListHandler().catch(errorHandling);
+          }}
+        >
+          Fetch Movies
+        </button>
       </section>
-      <section>
-        {content}
-      </section>
+      <section>{content}</section>
     </React.Fragment>
   );
 }
